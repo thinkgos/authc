@@ -35,8 +35,16 @@ func main() {
     e ,err := casbin.NewEnforcer("authz_model.conf", "authz_policy.csv")
     if err!= nil{
         panic(err)    
-    }   
-
+    }
+    // define your router, and use the Casbin authc middleware.
+    // the access that is denied by authz will return HTTP 403 error.
+    // before you use middleware2 your should use middleware1 to set subject 
+    middleware1 := func(next http.HandlerFunc) http.HandlerFunc{
+        return func(w http.ResponseWriter, r *http.Request) {
+            next.ServeHTTP(w, r.WithContext(authc.ContextWithSubject(r.Context(), "admin")))
+        }
+    }
+    middleware2 := authc.NewAuthorizer(e,authc.ContextSubject)
 }
 ```
 
@@ -55,6 +63,7 @@ For how to write authorization policy and other details, please refer to [the Ca
 - [Casbin](https://github.com/casbin/casbin)
 - [Gin](https://github.com/gin-gonic/gin)
 - [Gin-authz](https://github.com/gin-contrib/authz)
+- [Gin-authj](https://github.com/thinkgos/authj)
 
 ## License
 

@@ -8,6 +8,7 @@ import (
 	"github.com/casbin/casbin/v2"
 )
 
+// SubjectCtxKey subject context key
 var SubjectCtxKey = &contextKey{"subject"}
 
 // authorizer stores the casbin handler
@@ -48,9 +49,9 @@ func NewAuthorizer(e *casbin.Enforcer, s Subject) func(next http.HandlerFunc) ht
 	}
 }
 
-// NewContext return a copy of parent in which the value associated with
+// ContextWithSubject return a copy of parent in which the value associated with
 // SubjectCtxKey is subject.
-func NewContext(ctx context.Context, subject string) context.Context {
+func ContextWithSubject(ctx context.Context, subject string) context.Context {
 	return context.WithValue(ctx, SubjectCtxKey, subject)
 }
 
