@@ -1,11 +1,14 @@
 package authc
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
 	"github.com/casbin/casbin/v2"
 )
+
+var SubjectCtxKey = &contextKey{"subject"}
 
 // authorizer stores the casbin handler
 type authorizer struct {
@@ -45,6 +48,18 @@ func NewAuthorizer(e *casbin.Enforcer, s Subject) func(next http.HandlerFunc) ht
 	}
 }
 
+// NewContext return a copy of parent in which the value associated with
+// SubjectCtxKey is subject.
+func NewContext(ctx context.Context, subject string) context.Context {
+	return context.WithValue(ctx, SubjectCtxKey, subject)
+}
+
+// ContextSubject returns the value associated with this context for SubjectCtxKey,
+func ContextSubject(r *http.Request) string {
+	val, _ := r.Context().Value(SubjectCtxKey).(string)
+	return val
+}
+
 func renderJSON(w http.ResponseWriter, statusCode int, data interface{}) {
 	w.WriteHeader(statusCode)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -56,4 +71,15 @@ func renderJSON(w http.ResponseWriter, statusCode int, data interface{}) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// contextKey is a value for use with context.WithValue. It's used as
+// a pointer so it fits in an interface{} without allocation. This technique
+// for defining context keys was copied from Go 1.7's new use of context in net/http.
+type contextKey struct {
+	name string
+}
+
+func (k *contextKey) String() string {
+	return "authc context value " + k.name
 }
