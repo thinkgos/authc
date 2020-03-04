@@ -9,8 +9,8 @@
 
 
 
-authc is an authorization middleware for [Gin](https://github.com/gin-gonic/gin), it's based on
- [casbin](https://github.com/casbin/casbin).
+authc is an authorization middleware for net/http, it's based on
+[casbin](https://github.com/casbin/casbin).
 
 ## Installation
 
@@ -60,8 +60,6 @@ For how to write authorization policy and other details, please refer to [the Ca
 
 ## Getting Help
 
-- [Casbin](https://github.com/casbin/casbin)
-- [Gin](https://github.com/gin-gonic/gin)
 - [Gin-authz](https://github.com/gin-contrib/authz)
 - [Gin-authj](https://github.com/thinkgos/authj)
 
