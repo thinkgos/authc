@@ -26,7 +26,7 @@ func testAuthzRequest(t *testing.T, next http.HandlerFunc, user string, path str
 }
 
 func TestBasic(t *testing.T) {
-	e, _ := casbin.NewEnforcer("authz_model.conf", "authz_policy.csv")
+	e, _ := casbin.NewEnforcer("authj_model.conf", "authj_policy.csv")
 
 	next := func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(ContextWithSubject(r.Context(), "alice"))
@@ -43,7 +43,7 @@ func TestBasic(t *testing.T) {
 }
 
 func TestPathWildcard(t *testing.T) {
-	e, _ := casbin.NewEnforcer("authz_model.conf", "authz_policy.csv")
+	e, _ := casbin.NewEnforcer("authj_model.conf", "authj_policy.csv")
 	next := func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(ContextWithSubject(r.Context(), "bob"))
 
@@ -67,7 +67,7 @@ func TestPathWildcard(t *testing.T) {
 }
 
 func TestRBAC(t *testing.T) {
-	e, _ := casbin.NewEnforcer("authz_model.conf", "authz_policy.csv")
+	e, _ := casbin.NewEnforcer("authj_model.conf", "authj_policy.csv")
 	next := func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(ContextWithSubject(r.Context(), "cathy"))
 

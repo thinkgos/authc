@@ -1,4 +1,4 @@
-module github.com/thinkgos/authc
+module github.com/thinkgos/http-middlewares
 
 go 1.13
 
