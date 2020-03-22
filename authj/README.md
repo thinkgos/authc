@@ -1,14 +1,14 @@
 # authj
 
-[![GoDoc](https://godoc.org/github.com/thinkgos/http-middlewares/authj?status.svg)](https://godoc.org/github.com/thinkgos/http-middlewares/authj)
-
 authj is an authorization middleware for net/http, it's based on
 [casbin](https://github.com/casbin/casbin).
+
+[![GoDoc](https://godoc.org/github.com/thinkgos/http-middlewares/authj?status.svg)](https://godoc.org/github.com/thinkgos/http-middlewares/authj)
 
 ## Installation
 
 ```bash
-go get github.com/thinkgos/http-middlewares/authj
+    go get github.com/thinkgos/http-middlewares/authj
 ```
 
 ## Simple Example

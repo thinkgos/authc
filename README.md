@@ -1,4 +1,4 @@
-# http-middlewares 
+# http-middlewares
 
 http middleware fot net/http
 
@@ -8,7 +8,7 @@ http middleware fot net/http
 [![Go Report Card](https://goreportcard.com/badge/github.com/thinkgos/http-middlewares)](https://goreportcard.com/report/github.com/thinkgos/http-middlewares)
 [![Licence](https://img.shields.io/github/license/thinkgos/http-middlewares)](https://raw.githubusercontent.com/thinkgos/http-middlewares/master/LICENSE)
 
-
 ## middleware
+
 - [authj](authj) is an authorization middleware, it's based on
-[casbin](https://github.com/casbin/casbin).
+[casbin](https://github.com/casbin/casbin)
