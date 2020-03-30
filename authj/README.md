@@ -29,6 +29,7 @@ func main() {
     if err!= nil{
         panic(err)
     }
+
     // define your router, and use the Casbin authj middleware.
     // the access that is denied by authz will return HTTP 403 error.
     // before you use middleware2 your should use middleware1 to set subject
@@ -37,7 +38,7 @@ func main() {
             next.ServeHTTP(w, r.WithContext(authj.ContextWithSubject(r.Context(), "admin")))
         }
     }
-    middleware2 := authj.NewAuthorizer(e,authj.ContextSubject)
+    middleware2 := authj.NewAuthorizer(e)
 }
 ```
 
