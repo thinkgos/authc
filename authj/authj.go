@@ -13,20 +13,13 @@ import (
 // for defining context keys was copied from Go 1.7's new use of context in net/http.
 type ctxKey struct{}
 
-// authorizer stores the casbin handler
-type authorizer struct {
-	*casbin.Enforcer
-}
-
 // NewAuthorizer returns the authorizer
 // uses a Casbin enforcer and Subject function as input
 func NewAuthorizer(e *casbin.Enforcer) func(next http.HandlerFunc) http.HandlerFunc {
-	a := &authorizer{e}
-
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			//checks the userName,path,method permission combination from the request.
-			allowed, err := a.Enforce(subject(r), r.URL.Path, r.Method)
+			allowed, err := e.Enforce(subject(r), r.URL.Path, r.Method)
 			if err != nil {
 				renderJSON(w, http.StatusInternalServerError, map[string]interface{}{
 					"code":    http.StatusInternalServerError,
