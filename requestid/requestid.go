@@ -92,5 +92,5 @@ func FromRequestID(ctx context.Context) string {
 
 // NextRequestID generates the next request ID.
 func NextRequestID() string {
-	return fmt.Sprintf("%s-%010x", prefix, atomic.AddUint64(&sequenceId, 1))
+	return fmt.Sprintf("%s-%010d", prefix, atomic.AddUint64(&sequenceId, 1))
 }
