@@ -18,7 +18,7 @@ import (
 )
 
 // Key to use when setting the request ID.
-type ctxKeyRequestID struct{}
+type ctxRequestIDKey struct{}
 
 // RequestIDHeader is the name of the HTTP Header which contains the request id.
 // Exported so that it can be changed by developers
@@ -71,9 +71,9 @@ func RequestID(next http.Handler) http.Handler {
 		ctx := r.Context()
 		requestID := r.Header.Get(RequestIDHeader)
 		if requestID == "" {
-			requestID = NextRequestID()
+			requestID = nextRequestID()
 		}
-		ctx = context.WithValue(ctx, ctxKeyRequestID{}, requestID)
+		ctx = context.WithValue(ctx, ctxRequestIDKey{}, requestID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -81,16 +81,11 @@ func RequestID(next http.Handler) http.Handler {
 // FromRequestID returns a request ID from the given context if one is present.
 // Returns the empty string if a request ID cannot be found.
 func FromRequestID(ctx context.Context) string {
-	if ctx == nil {
-		return ""
-	}
-	if reqID, ok := ctx.Value(ctxKeyRequestID{}).(string); ok {
-		return reqID
-	}
-	return ""
+	reqID, _ := ctx.Value(ctxRequestIDKey{}).(string)
+	return reqID
 }
 
-// NextRequestID generates the next request ID.
-func NextRequestID() string {
+// nextRequestID generates the next request ID.
+func nextRequestID() string {
 	return fmt.Sprintf("%s-%010d", prefix, atomic.AddUint64(&sequenceId, 1))
 }
