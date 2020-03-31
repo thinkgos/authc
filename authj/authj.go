@@ -1,4 +1,4 @@
-package authc
+package authj
 
 import (
 	"context"
