@@ -50,7 +50,7 @@ func TestRequestID(t *testing.T) {
 			requestID := FromRequestID(r.Context())
 			response := fmt.Sprintf("RequestID: %s", requestID)
 
-			w.Write([]byte(response))
+			w.Write([]byte(response)) // nolint: errcheck
 		})
 		r.ServeHTTP(w, test.request())
 

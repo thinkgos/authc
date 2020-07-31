@@ -25,7 +25,7 @@ type ctxRequestIDKey struct{}
 var RequestIDHeader = "X-Request-Id"
 
 var prefix string
-var sequenceId uint64
+var sequenceID uint64
 
 // set chi middleware request_id
 // A quick note on the statistics here: we're trying to calculate the chance that
@@ -87,5 +87,5 @@ func FromRequestID(ctx context.Context) string {
 
 // nextRequestID generates the next request ID.
 func nextRequestID() string {
-	return fmt.Sprintf("%s-%010d", prefix, atomic.AddUint64(&sequenceId, 1))
+	return fmt.Sprintf("%s-%010d", prefix, atomic.AddUint64(&sequenceID, 1))
 }
