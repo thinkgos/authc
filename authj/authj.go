@@ -18,7 +18,7 @@ type ctxAuthKey struct{}
 func NewAuthorizer(e *casbin.Enforcer) func(next http.HandlerFunc) http.HandlerFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			//checks the userName,path,method permission combination from the request.
+			// checks the userName,path,method permission combination from the request.
 			allowed, err := e.Enforce(subject(r), r.URL.Path, r.Method)
 			if err != nil {
 				renderJSON(w, http.StatusInternalServerError, map[string]interface{}{

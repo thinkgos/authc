@@ -5,6 +5,7 @@
 package authj
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -12,10 +13,8 @@ import (
 	"github.com/casbin/casbin/v2"
 )
 
-func testAuthzRequest(t *testing.T, next http.HandlerFunc, user string, path string,
-	method string,
-	code int) {
-	r, _ := http.NewRequest(method, path, nil)
+func testAuthzRequest(t *testing.T, next http.HandlerFunc, user, path, method string, code int) {
+	r, _ := http.NewRequestWithContext(context.TODO(), method, path, nil)
 	r.SetBasicAuth(user, "123")
 	w := httptest.NewRecorder()
 	next.ServeHTTP(w, r)

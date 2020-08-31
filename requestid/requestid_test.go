@@ -1,6 +1,7 @@
 package requestid
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -18,7 +19,7 @@ func TestRequestID(t *testing.T) {
 		"Retrieves Request Id from default header": {
 			"X-Request-Id",
 			func() *http.Request {
-				req, _ := http.NewRequest("GET", "/", nil)
+				req, _ := http.NewRequestWithContext(context.TODO(), "GET", "/", nil)
 				req.Header.Add("X-Request-Id", "req-123456")
 
 				return req
@@ -28,7 +29,7 @@ func TestRequestID(t *testing.T) {
 		"Retrieves Request Id from custom header": {
 			"X-Trace-Id",
 			func() *http.Request {
-				req, _ := http.NewRequest("GET", "/", nil)
+				req, _ := http.NewRequestWithContext(context.TODO(), "GET", "/", nil)
 				req.Header.Add("X-Trace-Id", "trace:abc123")
 
 				return req
