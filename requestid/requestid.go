@@ -81,7 +81,10 @@ func RequestID(next http.Handler) http.Handler {
 // FromRequestID returns a request ID from the given context if one is present.
 // Returns the empty string if a request ID cannot be found.
 func FromRequestID(ctx context.Context) string {
-	reqID, _ := ctx.Value(ctxRequestIDKey{}).(string)
+	reqID, ok := ctx.Value(ctxRequestIDKey{}).(string)
+	if !ok {
+		return ""
+	}
 	return reqID
 }
 
