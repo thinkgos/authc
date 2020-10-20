@@ -21,7 +21,7 @@ func TraceID(next http.Handler) http.Handler {
 		ctx := r.Context()
 		requestID := r.Header.Get(TraceIDHeader)
 		if requestID == "" {
-			requestID = newTraceID()
+			requestID = NextTraceID()
 		}
 		ctx = context.WithValue(ctx, ctxTraceIDKey{}, requestID)
 		next.ServeHTTP(w, r.WithContext(ctx))
@@ -38,7 +38,7 @@ func FromTraceID(ctx context.Context) string {
 	return traceID
 }
 
-// newTraceID generates the next request ID.
-func newTraceID() string {
+// NextTraceID generates the next request ID.
+func NextTraceID() string {
 	return uuid.New().String()
 }

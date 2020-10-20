@@ -15,7 +15,7 @@ type ctxAuthKey struct{}
 
 // NewAuthorizer returns the authorizer
 // uses a Casbin enforcer and Subject function as input
-func NewAuthorizer(e *casbin.Enforcer) func(next http.HandlerFunc) http.HandlerFunc {
+func NewAuthorizer(e *casbin.Enforcer, subject func(r *http.Request) string) func(next http.HandlerFunc) http.HandlerFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			// checks the userName,path,method permission combination from the request.
@@ -40,12 +40,6 @@ func NewAuthorizer(e *casbin.Enforcer) func(next http.HandlerFunc) http.HandlerF
 	}
 }
 
-// subject returns the value associated with this context for subjectCtxKey,
-func subject(r *http.Request) string {
-	val, _ := r.Context().Value(ctxAuthKey{}).(string)
-	return val
-}
-
 func renderJSON(w http.ResponseWriter, statusCode int, data interface{}) {
 	w.WriteHeader(statusCode)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -57,6 +51,12 @@ func renderJSON(w http.ResponseWriter, statusCode int, data interface{}) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// Subject returns the value associated with this context for subjectCtxKey,
+func Subject(r *http.Request) string {
+	val, _ := r.Context().Value(ctxAuthKey{}).(string)
+	return val
 }
 
 // ContextWithSubject return a copy of parent in which the value associated with

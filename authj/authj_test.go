@@ -29,7 +29,7 @@ func TestBasic(t *testing.T) {
 
 	next := func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(ContextWithSubject(r.Context(), "alice"))
-		n := NewAuthorizer(e)(func(writer http.ResponseWriter,
+		n := NewAuthorizer(e, Subject)(func(writer http.ResponseWriter,
 			request *http.Request) {
 		})
 		n.ServeHTTP(w, r)
@@ -46,7 +46,7 @@ func TestPathWildcard(t *testing.T) {
 	next := func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(ContextWithSubject(r.Context(), "bob"))
 
-		n := NewAuthorizer(e)(func(writer http.ResponseWriter, request *http.Request) {})
+		n := NewAuthorizer(e, Subject)(func(writer http.ResponseWriter, request *http.Request) {})
 		n.ServeHTTP(w, r)
 	}
 
@@ -70,7 +70,7 @@ func TestRBAC(t *testing.T) {
 	next := func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(ContextWithSubject(r.Context(), "cathy"))
 
-		n := NewAuthorizer(e)(func(writer http.ResponseWriter, request *http.Request) {})
+		n := NewAuthorizer(e, Subject)(func(writer http.ResponseWriter, request *http.Request) {})
 		n.ServeHTTP(w, r)
 	}
 

@@ -66,12 +66,13 @@ func init() {
 // where "random" is a base62 random string that uniquely identifies this go
 // process, and where the last number is an atomically incremented request
 // counter.
+// it is format like {hostname}-{pid}-{init-rand-value}-{sequence}
 func RequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		requestID := r.Header.Get(RequestIDHeader)
 		if requestID == "" {
-			requestID = nextRequestID()
+			requestID = NextRequestID()
 		}
 		ctx = context.WithValue(ctx, ctxRequestIDKey{}, requestID)
 		next.ServeHTTP(w, r.WithContext(ctx))
@@ -88,7 +89,7 @@ func FromRequestID(ctx context.Context) string {
 	return reqID
 }
 
-// nextRequestID generates the next request ID.
-func nextRequestID() string {
+// NextRequestID generates the next request ID.
+func NextRequestID() string {
 	return fmt.Sprintf("%s-%010d", prefix, atomic.AddUint64(&sequenceID, 1))
 }
