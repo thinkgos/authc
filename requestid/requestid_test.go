@@ -60,3 +60,9 @@ func TestRequestID(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkNextRequestID(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		NextRequestID()
+	}
+}

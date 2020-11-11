@@ -60,3 +60,8 @@ func TestTraceID(t *testing.T) {
 		}
 	}
 }
+func BenchmarkTraceID(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		NextTraceID()
+	}
+}
