@@ -11,6 +11,10 @@ import (
 )
 
 func TestRequestID(t *testing.T) {
+	if RequestIdPrefix() != prefix {
+		t.Fatalf("RequestID prefix was not the expected value")
+	}
+
 	tests := map[string]struct {
 		requestIDHeader  string
 		request          func() *http.Request

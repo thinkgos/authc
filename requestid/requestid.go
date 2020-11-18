@@ -93,3 +93,8 @@ func FromRequestID(ctx context.Context) string {
 func NextRequestID() string {
 	return fmt.Sprintf("%s-%010d", prefix, atomic.AddUint64(&sequenceID, 1))
 }
+
+// RequestPrefix get request id prefix.
+func RequestIdPrefix() string {
+	return prefix
+}

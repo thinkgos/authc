@@ -15,7 +15,8 @@ type ctxAuthKey struct{}
 
 // NewAuthorizer returns the authorizer
 // uses a Casbin enforcer and subject function as input
-func NewAuthorizer(e casbin.IEnforcer, subject func(r *http.Request) string) func(next http.HandlerFunc) http.HandlerFunc {
+func NewAuthorizer(e casbin.IEnforcer,
+	subject func(r *http.Request) string) func(next http.HandlerFunc) http.HandlerFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			// checks the userName,path,method permission combination from the request.
