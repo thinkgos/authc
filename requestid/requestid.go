@@ -94,7 +94,7 @@ func NextRequestID() string {
 	return fmt.Sprintf("%s-%010d", prefix, atomic.AddUint64(&sequenceID, 1))
 }
 
-// RequestPrefix get request id prefix.
-func RequestIdPrefix() string {
+// Prefix get request id prefix.
+func Prefix() string {
 	return prefix
 }

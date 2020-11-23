@@ -11,7 +11,7 @@ import (
 )
 
 func TestRequestID(t *testing.T) {
-	if RequestIdPrefix() != prefix {
+	if Prefix() != prefix {
 		t.Fatalf("RequestID prefix was not the expected value")
 	}
 
