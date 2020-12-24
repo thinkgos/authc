@@ -12,6 +12,11 @@ http middleware fot net/http
 [![Tag](https://img.shields.io/github/v/tag/thinkgos/http-middlewares)](https://github.com/thinkgos/http-middlewares/tags)
 ## middleware
 
-- [authj](authj) is an authorization middleware, it's based on
-[casbin](https://github.com/casbin/casbin)
-- [requestid](requestid) is a middleware that injects a request ID into the context of each request.
+- [authj](#authj) is an authorization middleware, it's based on [casbin](https://github.com/casbin/casbin)
+- [gzap](#gzap) is gzap provides log handling using zap package.
+- [nocache](#nocache) noCache is a simple piece of middleware that sets a number of HTTP headers to prevent a router (or subrouter) from being cached by an upstream proxy and/or client.
+- [requestid](#requestid) is a middleware that injects a request ID into the context of each request.
+- [traceid](#traceid) traceid is a middleware that injects a trace ID into the context of each request. A trace ID is a string of uuid.
+
+## [mids](#mids)
+helper
