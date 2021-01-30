@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/middleware"
+	"go.uber.org/atomic"
 	"go.uber.org/zap"
 
 	"github.com/thinkgos/http-middlewares/mids"
@@ -39,10 +40,18 @@ func WithCustomFields(fields ...func(r *http.Request) zap.Field) Option {
 	}
 }
 
+// WithDisable optional disable this feature.
+func WithDisable(b *atomic.Bool) Option {
+	return func(c *Config) {
+		c.disable = b
+	}
+}
+
 // Config logger/recover config
 type Config struct {
 	timeFormat   string
 	utc          bool
+	disable      *atomic.Bool
 	customFields []func(r *http.Request) zap.Field
 }
 
@@ -51,11 +60,20 @@ type Config struct {
 // Requests with errors are logged using zap.Error().
 // Requests without errors are logged using zap.Info().
 func Logger(logger *zap.Logger, opts ...Option) func(next http.Handler) http.Handler {
-	cfg := Config{time.RFC3339Nano, false, nil}
+	cfg := Config{
+		time.RFC3339Nano,
+		false,
+		atomic.NewBool(false),
+		nil,
+	}
 	for _, opt := range opts {
 		opt(&cfg)
 	}
 	return func(next http.Handler) http.Handler {
+		if cfg.disable.Load() {
+			return next
+		}
+
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
 			// some evil middlewares modify this values
@@ -95,11 +113,19 @@ func Logger(logger *zap.Logger, opts ...Option) func(next http.Handler) http.Han
 // stack means whether output the stack info.
 // The stack info is easy to find where the error occurs but the stack info is too large.
 func Recovery(logger *zap.Logger, stack bool, opts ...Option) func(next http.Handler) http.Handler {
-	cfg := Config{time.RFC3339Nano, false, nil}
+	cfg := Config{
+		time.RFC3339Nano,
+		false,
+		atomic.NewBool(false),
+		nil,
+	}
 	for _, opt := range opts {
 		opt(&cfg)
 	}
 	return func(next http.Handler) http.Handler {
+		if cfg.disable.Load() {
+			return next
+		}
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			defer func() {
 				if err := recover(); err != nil {
