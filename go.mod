@@ -3,7 +3,7 @@ module github.com/thinkgos/http-middlewares
 go 1.14
 
 require (
-	github.com/casbin/casbin/v2 v2.22.0
+	github.com/casbin/casbin/v2 v2.23.0
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/google/uuid v1.2.0
 	go.uber.org/atomic v1.7.0
