@@ -21,9 +21,10 @@ func main() {
 	//   - Logs all requests, like a combined access and error log.
 	//   - Logs to stdout.
 	//   - RFC3339 with UTC time format.
+	//   - Custom zap field
 	r.Use(gzap.Logger(logger,
 		gzap.WithTimeFormat(time.RFC3339),
-		gzap.WithUTC(),
+		gzap.WithUTC(true),
 		gzap.WithCustomFields(
 			func(r *http.Request) zap.Field { return zap.String("custom field1", mids.ClientIP(r)) },
 			func(r *http.Request) zap.Field { return zap.String("custom field2", mids.ClientIP(r)) },
@@ -32,6 +33,7 @@ func main() {
 
 	// Logs all panic to error log
 	//   - stack means whether output the stack info.
+	//   - Custom zap field
 	r.Use(gzap.Recovery(logger, true,
 		gzap.WithCustomFields(
 			func(r *http.Request) zap.Field { return zap.String("custom field1", mids.ClientIP(r)) },

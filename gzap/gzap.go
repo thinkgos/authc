@@ -27,9 +27,9 @@ func WithTimeFormat(layout string) Option {
 }
 
 // WithUTC a boolean stating whether to use UTC time zone or local.(default local).
-func WithUTC() Option {
+func WithUTC(b bool) Option {
 	return func(c *Config) {
-		c.utc = true
+		c.utc = b
 	}
 }
 

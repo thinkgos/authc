@@ -11,10 +11,6 @@ import (
 )
 
 func TestRequestID(t *testing.T) {
-	if Prefix() != prefix {
-		t.Fatalf("RequestID prefix was not the expected value")
-	}
-
 	tests := map[string]struct {
 		requestIDHeader  string
 		request          func() *http.Request
@@ -47,9 +43,7 @@ func TestRequestID(t *testing.T) {
 
 		r := chi.NewRouter()
 
-		RequestIDHeader = test.requestIDHeader
-
-		r.Use(RequestID)
+		r.Use(RequestID(WithRequestIDHeader(test.requestIDHeader), WithNextRequestID(NextRequestID)))
 
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			requestID := FromRequestID(r.Context())

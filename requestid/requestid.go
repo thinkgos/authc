@@ -20,14 +20,69 @@ import (
 // Key to use when setting the request ID.
 type ctxRequestIDKey struct{}
 
-// RequestIDHeader is the name of the HTTP Header which contains the request id.
-// Exported so that it can be changed by developers
-var RequestIDHeader = "X-Request-Id"
+// Config defines the config for RequestID middleware
+type Config struct {
+	requestIDHeader string
+	nextRequestID   func() string
+}
+
+// Option RequestID option
+type Option func(*Config)
+
+// WithRequestIDHeader optional request id header (default "X-Request-Id")
+func WithRequestIDHeader(s string) Option {
+	return func(c *Config) {
+		c.requestIDHeader = s
+	}
+}
+
+// WithRequestIDHeader optional next request id function (default NextRequestID function)
+func WithNextRequestID(nextRequestID func() string) Option {
+	return func(c *Config) {
+		c.nextRequestID = nextRequestID
+	}
+}
+
+// RequestID is a middleware that injects a request ID into the context of each
+// request.
+// - requestIDHeader is the name of the HTTP Header which contains the request id.
+// Exported so that it can be changed by developers. (default "X-Request-Id")
+// - nextRequestID generates the next request ID.(default NextRequestID)
+func RequestID(opts ...Option) func(next http.Handler) http.Handler {
+	c := &Config{
+		requestIDHeader: "X-Request-ID",
+		nextRequestID:   NextRequestID,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			requestID := r.Header.Get(c.requestIDHeader)
+			if requestID == "" {
+				requestID = c.nextRequestID()
+			}
+			ctx = context.WithValue(ctx, ctxRequestIDKey{}, requestID)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
+
+// FromRequestID returns a request ID from the given context if one is present.
+// Returns the empty string if a request ID cannot be found.
+func FromRequestID(ctx context.Context) string {
+	reqID, ok := ctx.Value(ctxRequestIDKey{}).(string)
+	if !ok {
+		return ""
+	}
+	return reqID
+}
 
 var prefix string
 var sequenceID uint64
 
-// set chi middleware request_id
+// see chi middleware request_id
 // A quick note on the statistics here: we're trying to calculate the chance that
 // two randomly generated base62 prefixes will collide. We use the formula from
 // http://en.wikipedia.org/wiki/Birthday_problem
@@ -45,7 +100,6 @@ var sequenceID uint64
 // than a millionth of a percent chance of generating two colliding IDs.
 
 func init() {
-	pid := os.Getpid()
 	hostname, err := os.Hostname()
 	if hostname == "" || err != nil {
 		hostname = "localhost"
@@ -58,43 +112,14 @@ func init() {
 		b64 = strings.NewReplacer("+", "", "/", "").Replace(b64)
 	}
 
-	prefix = fmt.Sprintf("%s-%d-%s", hostname, pid, b64[0:10])
-}
-
-// RequestID is a middleware that injects a request ID into the context of each
-// request. A request ID is a string of the form "host.example.com/random-0001",
-// where "random" is a base62 random string that uniquely identifies this go
-// process, and where the last number is an atomically incremented request
-// counter.
-// it is format like {hostname}-{pid}-{init-rand-value}-{sequence}
-func RequestID(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		requestID := r.Header.Get(RequestIDHeader)
-		if requestID == "" {
-			requestID = NextRequestID()
-		}
-		ctx = context.WithValue(ctx, ctxRequestIDKey{}, requestID)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
-}
-
-// FromRequestID returns a request ID from the given context if one is present.
-// Returns the empty string if a request ID cannot be found.
-func FromRequestID(ctx context.Context) string {
-	reqID, ok := ctx.Value(ctxRequestIDKey{}).(string)
-	if !ok {
-		return ""
-	}
-	return reqID
+	prefix = fmt.Sprintf("%s-%d-%s", hostname, os.Getpid(), b64[:10])
 }
 
 // NextRequestID generates the next request ID.
+// A request ID is a string of the form like {hostname}-{pid}-{init-rand-value}-{sequence},
+// where "random" is a base62 random string that uniquely identifies this go
+// process, and where the last number is an atomically incremented request
+// counter.
 func NextRequestID() string {
 	return fmt.Sprintf("%s-%010d", prefix, atomic.AddUint64(&sequenceID, 1))
-}
-
-// Prefix get request id prefix.
-func Prefix() string {
-	return prefix
 }
