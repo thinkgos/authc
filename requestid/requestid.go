@@ -4,7 +4,7 @@ package requestid
 // https://github.com/zenazn/goji/tree/master/web/middleware
 
 // Ported from chi's middleware, source:
-// https://github.com/go-chi/chi/blob/master/middleware
+// https://github.com/go-chi/chi/v5/blob/master/middleware
 
 import (
 	"context"
