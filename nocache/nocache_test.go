@@ -1,6 +1,7 @@
 package nocache
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,7 +14,7 @@ func Test_NoCacheHeaders(t *testing.T) {
 		"Expires":       epoch,
 	}
 	recorder := httptest.NewRecorder()
-	r, _ := http.NewRequest("GET", "/", nil)
+	r, _ := http.NewRequestWithContext(context.Background(), "GET", "/", nil)
 
 	m := http.NewServeMux()
 	NoCache(m).ServeHTTP(recorder, r)
