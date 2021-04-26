@@ -105,15 +105,15 @@ func init() {
 	if hostname == "" || err != nil {
 		hostname = "localhost"
 	}
-	var buf [12]byte
+	var buf [20]byte
 	var b64 string
-	for len(b64) < 10 {
+	for len(b64) < 16 {
 		_, _ = rand.Read(buf[:])
 		b64 = base64.StdEncoding.EncodeToString(buf[:])
 		b64 = strings.NewReplacer("+", "", "/", "").Replace(b64)
 	}
 
-	prefix = fmt.Sprintf("%s-%d-%s", hostname, os.Getpid(), b64[:10])
+	prefix = fmt.Sprintf("%s-%d-%s-", hostname, os.Getpid(), b64[:10])
 }
 
 // NextRequestID generates the next request ID.
@@ -122,5 +122,5 @@ func init() {
 // process, and where the last number is an atomically incremented request
 // counter.
 func NextRequestID() string {
-	return fmt.Sprintf("%s-%010d", prefix, atomic.AddUint64(&sequenceID, 1))
+	return fmt.Sprintf("%s%010d", prefix, atomic.AddUint64(&sequenceID, 1))
 }
