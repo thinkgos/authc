@@ -36,7 +36,7 @@ func WithRequestIDHeader(s string) Option {
 	}
 }
 
-// WithRequestIDHeader optional next request id function (default NextRequestID function)
+// WithNextRequestID optional next request id function (default NextRequestID function)
 func WithNextRequestID(nextRequestID func() string) Option {
 	return func(c *Config) {
 		c.nextRequestID = nextRequestID
@@ -44,7 +44,7 @@ func WithNextRequestID(nextRequestID func() string) Option {
 }
 
 // RequestID is a middleware that injects a request ID into the context of each
-// request.
+// request. if it is empty, set the write head
 // - requestIDHeader is the name of the HTTP Header which contains the request id.
 // Exported so that it can be changed by developers. (default "X-Request-Id")
 // - nextRequestID generates the next request ID.(default NextRequestID)
@@ -62,6 +62,7 @@ func RequestID(opts ...Option) func(next http.Handler) http.Handler {
 			requestID := r.Header.Get(c.requestIDHeader)
 			if requestID == "" {
 				requestID = c.nextRequestID()
+				w.Header().Add(c.requestIDHeader, requestID)
 			}
 			ctx = context.WithValue(ctx, ctxRequestIDKey{}, requestID)
 			next.ServeHTTP(w, r.WithContext(ctx))
