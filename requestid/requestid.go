@@ -113,7 +113,7 @@ func init() {
 		b64 = strings.NewReplacer("+", "", "/", "").Replace(b64)
 	}
 
-	prefix = fmt.Sprintf("%s-%d-%s-", hostname, os.Getpid(), b64[:10])
+	prefix = fmt.Sprintf("%s-%d-%s-", hostname, os.Getpid(), b64[:16])
 }
 
 // NextRequestID generates the next request ID.
@@ -122,5 +122,5 @@ func init() {
 // process, and where the last number is an atomically incremented request
 // counter.
 func NextRequestID() string {
-	return fmt.Sprintf("%s%010d", prefix, atomic.AddUint64(&sequenceID, 1))
+	return fmt.Sprintf("%s%012d", prefix, atomic.AddUint64(&sequenceID, 1))
 }

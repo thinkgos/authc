@@ -11,6 +11,7 @@ import (
 )
 
 func TestRequestID(t *testing.T) {
+	t.Log(NextRequestID())
 	tests := map[string]struct {
 		requestIDHeader  string
 		request          func() *http.Request
