@@ -113,7 +113,7 @@ func init() {
 		b64 = strings.NewReplacer("+", "", "/", "").Replace(b64)
 	}
 
-	prefix = fmt.Sprintf("%s-%d-%s-", hostname, os.Getpid(), b64[:10])
+	prefix = fmt.Sprintf("%s-%d-%s-", hostname, os.Getpid(), b64[:16])
 }
 
 // NextRequestID generates the next request ID.
